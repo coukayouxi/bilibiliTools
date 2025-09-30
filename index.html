@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B站信息查询工具</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📺 Bilibili 信息查询</h1>
+            <p>专业的B站数据查询工具 - 为创作者和粉丝服务</p>
+        </div>
+
+        <nav class="nav">
+            <ul class="nav-menu">
+                <li class="nav-item active" data-page="home">🏠 首页</li>
+                <li class="nav-item" data-page="user">👤 用户查询</li>
+                <li class="nav-item" data-page="video">🎬 视频分析</li>
+                <li class="nav-item" data-page="live">🔴 直播数据</li>
+                <li class="nav-item" data-page="rank">🏆 排行榜单</li>
+                <li class="nav-item" data-page="comment">💬 评论获取</li>
+                <li class="nav-item" data-page="emoji">😊 表情包</li>
+                <li class="nav-item" data-page="api">📚 API文档</li>
+                <li class="nav-item" data-page="chat">💬 交流社区</li>
+            </ul>
+        </nav>
+
+        <div class="page active" id="home-page">
+            <div class="page-header" data-icon="🏠">
+                <h2>首页概览</h2>
+            </div>
+            <p style="color: #666; font-size: 16px; margin-bottom: 30px;">欢迎使用B站信息查询工具！请选择上方菜单中的功能进行查询。</p>
+            
+            <div class="feature-grid">
+                <div class="feature-card" onclick="switchPage('user')">
+                    <h4>👤 用户查询</h4>
+                    <p>查询用户粉丝数、关注数等信息</p>
+                </div>
+                <div class="feature-card" onclick="switchPage('video')">
+                    <h4>🎬 视频分析</h4>
+                    <p>获取视频播放量、弹幕数等数据</p>
+                </div>
+                <div class="feature-card" onclick="switchPage('live')">
+                    <h4>🔴 直播数据</h4>
+                    <p>查询直播间在线人数和状态</p>
+                </div>
+                <div class="feature-card" onclick="switchPage('rank')">
+                    <h4>🏆 排行榜单</h4>
+                    <p>获取各分区排行榜TOP1</p>
+                </div>
+                <div class="feature-card" onclick="switchPage('comment')">
+                    <h4>💬 评论获取</h4>
+                    <p>获取视频热门评论</p>
+                </div>
+                <div class="feature-card" onclick="switchPage('emoji')">
+                    <h4>😊 表情包</h4>
+                    <p>随机B站特色表情</p>
+                </div>
+                <div class="feature-card" onclick="switchPage('api')">
+                    <h4>📚 API文档</h4>
+                    <p>查看API使用方法</p>
+                </div>
+                <div class="feature-card" onclick="switchPage('chat')">
+                    <h4>💬 交流社区</h4>
+                    <p>参与讨论和交流</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="user-page">
+            <div class="page-header" data-icon="👤">
+                <h2>用户信息查询</h2>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <label>用户UID</label>
+                    <input type="text" id="user-uid" placeholder="输入用户UID" value="541080936">
+                </div>
+                <button class="btn" onclick="getUserInfo()">📊 查询用户数据</button>
+                <button class="btn" onclick="checkLive()">🔴 检查直播状态</button>
+            </div>
+            <div class="results" id="user-results"></div>
+        </div>
+
+        <div class="page" id="video-page">
+            <div class="page-header" data-icon="🎬">
+                <h2>视频信息查询</h2>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <label>视频BVID</label>
+                    <input type="text" id="video-bvid" placeholder="输入视频BVID" value="BV1arpEz2EcE">
+                </div>
+                <button class="btn" onclick="getVideoInfo()">📋 获取视频信息</button>
+            </div>
+            <div class="results" id="video-results"></div>
+        </div>
+
+        <div class="page" id="live-page">
+            <div class="page-header" data-icon="🔴">
+                <h2>直播间数据</h2>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <label>直播间ID</label>
+                    <input type="text" id="live-room" placeholder="输入直播间ID" value="21452505">
+                </div>
+                <button class="btn" onclick="getLiveOnline()">👥 查询在线人数</button>
+            </div>
+            <div class="results" id="live-results"></div>
+        </div>
+
+        <div class="page" id="rank-page">
+            <div class="page-header" data-icon="🏆">
+                <h2>排行榜查询</h2>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <label>分区ID</label>
+                    <input type="text" id="rank-rid" placeholder="输入分区ID" value="0">
+                </div>
+                <button class="btn" onclick="getRankTop1()">🥇 获取日榜TOP1</button>
+            </div>
+            <div class="results" id="rank-results"></div>
+        </div>
+
+        <div class="page" id="comment-page">
+            <div class="page-header" data-icon="💬">
+                <h2>热评获取</h2>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <label>视频BVID</label>
+                    <input type="text" id="comment-bvid" placeholder="输入视频BVID" value="BV1arpEz2EcE">
+                </div>
+                <div class="input-group">
+                    <label>获取数量</label>
+                    <select id="comment-count">
+                        <option value="1">1条</option>
+                        <option value="2">2条</option>
+                        <option value="3">3条</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>分隔符</label>
+                    <select id="comment-separator">
+                        <option value="换行">换行</option>
+                        <option value="空格">空格</option>
+                        <option value="逗号">逗号</option>
+                        <option value="时">无分隔</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="getHotComments()">💬 获取热评</button>
+            </div>
+            <div class="results" id="comment-results"></div>
+        </div>
+
+        <div class="page" id="emoji-page">
+            <div class="page-header" data-icon="😊">
+                <h2>随机B站表情</h2>
+            </div>
+            <div class="form-group" style="text-align: center;">
+                <button class="btn" onclick="getRandomEmoji()">🎲 生成随机表情</button>
+                <div id="emoji-display" class="emoji-display"></div>
+            </div>
+        </div>
+
+        <div class="page" id="api-page">
+            <div class="page-header" data-icon="📚">
+                <h2>API文档</h2>
+            </div>
+            
+            <div class="api-doc">
+                <h3 style="color: #222; margin-bottom: 20px;">B站信息查询 API 文档</h3>
+                <p style="color: #666; margin-bottom: 20px; line-height: 1.6;">
+                    本API提供B站数据查询功能，所有请求都需要通过代理访问以避免跨域问题。
+                </p>
+                
+                <div class="api-section">
+                    <h3>1. 用户信息查询</h3>
+                    <div class="api-endpoint">
+                        GET https://api.allorigins.win/raw?url=https://api.bilibili.com/x/relation/stat?vmid={uid}
+                    </div>
+                    <div class="api-params">
+                        <h4>参数说明:</h4>
+                        <div class="param-item">
+                            <strong>vmid</strong> (必需) - 用户UID
+                        </div>
+                    </div>
+                    <div class="example">
+// JavaScript 示例<br>
+const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.bilibili.com/x/relation/stat?vmid=541080936'));<br>
+const data = await response.json();<br>
+console.log(data.data.follower); // 粉丝数
+                    </div>
+                    <div class="response">
+                        <strong>响应示例:</strong><br>
+                        {<br>
+                        &nbsp;&nbsp;"code": 0,<br>
+                        &nbsp;&nbsp;"data": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"follower": 1000000,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"following": 500,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"black": 10<br>
+                        &nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                </div>
+
+                <div class="api-section">
+                    <h3>2. 视频信息查询</h3>
+                    <div class="api-endpoint">
+                        GET https://api.allorigins.win/raw?url=https://api.bilibili.com/x/web-interface/view?bvid={bvid}
+                    </div>
+                    <div class="api-params">
+                        <h4>参数说明:</h4>
+                        <div class="param-item">
+                            <strong>bvid</strong> (必需) - 视频BVID
+                        </div>
+                    </div>
+                    <div class="example">
+// JavaScript 示例<br>
+const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.bilibili.com/x/web-interface/view?bvid=BV1arpEz2EcE'));<br>
+const data = await response.json();<br>
+console.log(data.data.title); // 视频标题
+                    </div>
+                    <div class="response">
+                        <strong>响应示例:</strong><br>
+                        {<br>
+                        &nbsp;&nbsp;"code": 0,<br>
+                        &nbsp;&nbsp;"data": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"title": "视频标题",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"stat": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"view": 1000000,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"danmaku": 5000,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"like": 10000<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                </div>
+
+                <div class="api-section">
+                    <h3>3. 直播间信息查询</h3>
+                    <div class="api-endpoint">
+                        GET https://api.allorigins.win/raw?url=https://api.live.bilibili.com/room/v1/Room/get_info?room_id={room_id}
+                    </div>
+                    <div class="api-params">
+                        <h4>参数说明:</h4>
+                        <div class="param-item">
+                            <strong>room_id</strong> (必需) - 直播间ID
+                        </div>
+                    </div>
+                    <div class="example">
+// JavaScript 示例<br>
+const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.live.bilibili.com/room/v1/Room/get_info?room_id=21452505'));<br>
+const data = await response.json();<br>
+console.log(data.data.online); // 在线人数
+                    </div>
+                    <div class="response">
+                        <strong>响应示例:</strong><br>
+                        {<br>
+                        &nbsp;&nbsp;"code": 0,<br>
+                        &nbsp;&nbsp;"data": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"online": 1000,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"live_status": 1<br>
+                        &nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                </div>
+
+                <div class="api-section">
+                    <h3>4. 排行榜查询</h3>
+                    <div class="api-endpoint">
+                        GET https://api.allorigins.win/raw?url=https://api.bilibili.com/x/web-interface/ranking/v2?rid={rid}&type=all
+                    </div>
+                    <div class="api-params">
+                        <h4>参数说明:</h4>
+                        <div class="param-item">
+                            <strong>rid</strong> (必需) - 分区ID (0为全站)
+                        </div>
+                        <div class="param-item">
+                            <strong>type</strong> (可选) - 类型 (默认all)
+                        </div>
+                    </div>
+                    <div class="example">
+// JavaScript 示例<br>
+const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.bilibili.com/x/web-interface/ranking/v2?rid=0&type=all'));<br>
+const data = await response.json();<br>
+console.log(data.data.list[0].title); // TOP1标题
+                    </div>
+                    <div class="response">
+                        <strong>响应示例:</strong><br>
+                        {<br>
+                        &nbsp;&nbsp;"code": 0,<br>
+                        &nbsp;&nbsp;"data": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"list": [<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"title": "TOP1视频标题",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"stat": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"view": 1000000<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;]<br>
+                        &nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                </div>
+
+                <div class="api-section">
+                    <h3>5. 视频评论查询</h3>
+                    <div class="api-endpoint">
+                        GET https://api.allorigins.win/raw?url=https://api.bilibili.com/x/v2/reply?type=1&oid={bvid}&sort=2&ps={count}
+                    </div>
+                    <div class="api-params">
+                        <h4>参数说明:</h4>
+                        <div class="param-item">
+                            <strong>type</strong> (必需) - 评论类型 (1为视频评论)
+                        </div>
+                        <div class="param-item">
+                            <strong>oid</strong> (必需) - 对象ID (BVID)
+                        </div>
+                        <div class="param-item">
+                            <strong>sort</strong> (必需) - 排序方式 (2为按热度)
+                        </div>
+                        <div class="param-item">
+                            <strong>ps</strong> (必需) - 获取数量 (最大3)
+                        </div>
+                    </div>
+                    <div class="example">
+// JavaScript 示例<br>
+const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.bilibili.com/x/v2/reply?type=1&oid=BV1arpEz2EcE&sort=2&ps=1'));<br>
+const data = await response.json();<br>
+console.log(data.data.replies[0].content.message); // 热门评论
+                    </div>
+                    <div class="response">
+                        <strong>响应示例:</strong><br>
+                        {<br>
+                        &nbsp;&nbsp;"code": 0,<br>
+                        &nbsp;&nbsp;"data": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"replies": [<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"content": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"message": "这是一条热门评论"<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;]<br>
+                        &nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                </div>
+
+                <div class="api-section">
+                    <h3>错误处理</h3>
+                    <p>当API返回错误时，通常会包含以下信息：</p>
+                    <div class="response">
+                        <strong>错误响应示例:</strong><br>
+                        {<br>
+                        &nbsp;&nbsp;"code": -404,<br>
+                        &nbsp;&nbsp;"message": "稿件不存在"<br>
+                        }
+                    </div>
+                    <p style="margin-top: 15px;">
+                        <strong>常见错误码:</strong><br>
+                        0: 成功<br>
+                        -404: 资源不存在<br>
+                        -500: 服务器错误<br>
+                        62002: 视频需要登录才能观看
+                    </p>
+                </div>
+
+                <div class="api-section">
+                    <h3>使用限制</h3>
+                    <ul style="padding-left: 20px; color: #555; line-height: 1.6;">
+                        <li>请合理使用API，避免频繁请求</li>
+                        <li>建议添加请求间隔，避免被限制访问</li>
+                        <li>数据仅供参考，实际数据以B站官方为准</li>
+                        <li>此API仅供学习和研究使用</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="chat-page">
+            <div class="page-header" data-icon="💬">
+                <h2>交流社区</h2>
+            </div>
+            <div class="chat-container">
+                <h3 style="color: #222; margin-bottom: 20px;">参与讨论</h3>
+                <p style="color: #666; margin-bottom: 20px;">欢迎在下方的评论区分享你的使用体验、提出问题或建议！</p>
+                
+                <!-- Giscus评论系统 -->
+                <div id="giscus-container" style="margin-top: 20px;">
+                    <script src="https://giscus.app/client.js"
+                            data-repo="coukayouxi/bilibiliTools"
+                            data-repo-id="R_kgDOP5xTLA"
+                            data-category="Ideas"
+                            data-category-id="DIC_kwDOP5xTLM4CwExJ"
+                            data-mapping="pathname"
+                            data-strict="0"
+                            data-reactions-enabled="1"
+                            data-emit-metadata="0"
+                            data-input-position="bottom"
+                            data-theme="dark_dimmed"
+                            data-lang="zh-CN"
+                            crossorigin="anonymous"
+                            async>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Powered by <span class="bilibili-logo">Bilibili</span> API | 专业B站数据查询工具</p>
+        <p style="margin-top: 5px; font-size: 12px; color: #999;">此工具仅供学习交流使用</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
