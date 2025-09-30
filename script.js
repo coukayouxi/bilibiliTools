@@ -26,35 +26,29 @@ function switchPage(pageName) {
     document.getElementById(pageName + '-page').classList.add('active');
     // 设置对应导航项为active
     document.querySelector(`[data-page="${pageName}"]`).classList.add('active');
-    
-    // 更新浏览器历史记录
-    history.pushState({page: pageName}, '', '/' + pageName);
 }
 
-// 根据当前URL路径切换页面
-function switchPageByPath() {
-    const path = window.location.pathname.substring(1); // 移除 '/' 符号
-    
-    if (path) {
-        // 检查是否是特殊路径如 user-uid, video-aid 等
-        if (path.includes('-')) {
-            const [pageName, param] = path.split('-', 2);
-            switchPage(pageName);
-            // 这里可以添加处理参数的逻辑
-        } else {
-            switchPage(path);
-        }
-    } else {
-        // 如果没有路径，默认显示首页
-        switchPage('home');
-    }
-}
-
-// 根据当前URL hash切换页面（为了向后兼容）
+// 根据当前URL hash切换页面
 function switchPageByHash() {
     const hash = window.location.hash.substring(1); // 移除 '#' 符号
     if (hash) {
-        switchPage(hash);
+        // 检查是否是特殊hash如 user-uid, video-bvid 等
+        if (hash.includes('-')) {
+            const [pageName, param] = hash.split('-', 2);
+            switchPage(pageName);
+            // 根据参数类型填充对应输入框
+            if (pageName === 'user' && param) {
+                document.getElementById('user-uid').value = param;
+            } else if (pageName === 'video' && param) {
+                document.getElementById('video-bvid').value = param;
+            } else if (pageName === 'live' && param) {
+                document.getElementById('live-room').value = param;
+            } else if (pageName === 'rank' && param) {
+                document.getElementById('rank-rid').value = param;
+            }
+        } else {
+            switchPage(hash);
+        }
     } else {
         // 如果没有hash，默认显示首页
         switchPage('home');
@@ -66,32 +60,51 @@ document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', function() {
         const pageName = this.getAttribute('data-page');
         switchPage(pageName);
+        // 更新URL hash但不刷新页面
+        window.location.hash = pageName;
     });
 });
 
-// 监听浏览器前进后退按钮
-window.addEventListener('popstate', function(event) {
-    if (window.location.hash) {
-        switchPageByHash();
-    } else {
-        switchPageByPath();
-    }
-});
+// 监听hash变化事件
+window.addEventListener('hashchange', switchPageByHash);
 
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', function() {
-    // 首先检查是否有hash（向后兼容）
-    if (window.location.hash) {
-        switchPageByHash();
-    } else {
-        // 否则根据路径切换页面
-        switchPageByPath();
-    }
+    // 根据URL中的hash值显示对应页面
+    switchPageByHash();
     
     // 生成随机表情
     getRandomEmoji();
     setInterval(getRandomEmoji, 5000);
     
+    // 键盘回车事件
+    document.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const activePage = document.querySelector('.page.active').id.replace('-page', '');
+            
+            if (activePage === 'user') {
+                if (document.activeElement.id === 'user-uid') {
+                    getUserInfo();
+                }
+            } else if (activePage === 'video') {
+                if (document.activeElement.id === 'video-bvid') {
+                    getVideoInfo();
+                }
+            } else if (activePage === 'live') {
+                if (document.activeElement.id === 'live-room') {
+                    getLiveOnline();
+                }
+            } else if (activePage === 'rank') {
+                if (document.activeElement.id === 'rank-rid') {
+                    getRankTop1();
+                }
+            } else if (activePage === 'comment') {
+                if (document.activeElement.id === 'comment-bvid') {
+                    getHotComments();
+                }
+            }
+        }
+    });
 });
 
 // 显示结果
@@ -342,31 +355,3 @@ function getRandomEmoji() {
     document.getElementById('emoji-display').textContent = emoji;
 }
 
-// 键盘回车事件
-document.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        const activePage = document.querySelector('.page.active').id.replace('-page', '');
-        
-        if (activePage === 'user') {
-            if (document.activeElement.id === 'user-uid') {
-                getUserInfo();
-            }
-        } else if (activePage === 'video') {
-            if (document.activeElement.id === 'video-bvid') {
-                getVideoInfo();
-            }
-        } else if (activePage === 'live') {
-            if (document.activeElement.id === 'live-room') {
-                getLiveOnline();
-            }
-        } else if (activePage === 'rank') {
-            if (document.activeElement.id === 'rank-rid') {
-                getRankTop1();
-            }
-        } else if (activePage === 'comment') {
-            if (document.activeElement.id === 'comment-bvid') {
-                getHotComments();
-            }
-        }
-    }
-});

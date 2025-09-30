@@ -20,11 +20,14 @@ export const onRequest = async (context) => {
     const uid = path.substring(10); // 提取 uid
     return Response.redirect(url.origin + '/#user-' + uid, 301);
   } else if (path.startsWith('/api/video-')) {
-    const aid = path.substring(11); // 提取 aid
-    return Response.redirect(url.origin + '/#video-' + aid, 301);
+    const bvid = path.substring(11); // 提取 bvid
+    return Response.redirect(url.origin + '/#video-' + bvid, 301);
   } else if (path.startsWith('/api/live-')) {
     const room = path.substring(10); // 提取 room
     return Response.redirect(url.origin + '/#live-' + room, 301);
+  } else if (path.startsWith('/api/rank-')) {
+    const rid = path.substring(10); // 提取 rid
+    return Response.redirect(url.origin + '/#rank-' + rid, 301);
   }
   
   const response = await context.next();
