@@ -26,6 +26,39 @@ function switchPage(pageName) {
     document.getElementById(pageName + '-page').classList.add('active');
     // 设置对应导航项为active
     document.querySelector(`[data-page="${pageName}"]`).classList.add('active');
+    
+    // 更新浏览器历史记录
+    history.pushState({page: pageName}, '', '/' + pageName);
+}
+
+// 根据当前URL路径切换页面
+function switchPageByPath() {
+    const path = window.location.pathname.substring(1); // 移除 '/' 符号
+    
+    if (path) {
+        // 检查是否是特殊路径如 user-uid, video-aid 等
+        if (path.includes('-')) {
+            const [pageName, param] = path.split('-', 2);
+            switchPage(pageName);
+            // 这里可以添加处理参数的逻辑
+        } else {
+            switchPage(path);
+        }
+    } else {
+        // 如果没有路径，默认显示首页
+        switchPage('home');
+    }
+}
+
+// 根据当前URL hash切换页面（为了向后兼容）
+function switchPageByHash() {
+    const hash = window.location.hash.substring(1); // 移除 '#' 符号
+    if (hash) {
+        switchPage(hash);
+    } else {
+        // 如果没有hash，默认显示首页
+        switchPage('home');
+    }
 }
 
 // 页面切换事件
@@ -34,6 +67,31 @@ document.querySelectorAll('.nav-item').forEach(item => {
         const pageName = this.getAttribute('data-page');
         switchPage(pageName);
     });
+});
+
+// 监听浏览器前进后退按钮
+window.addEventListener('popstate', function(event) {
+    if (window.location.hash) {
+        switchPageByHash();
+    } else {
+        switchPageByPath();
+    }
+});
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', function() {
+    // 首先检查是否有hash（向后兼容）
+    if (window.location.hash) {
+        switchPageByHash();
+    } else {
+        // 否则根据路径切换页面
+        switchPageByPath();
+    }
+    
+    // 生成随机表情
+    getRandomEmoji();
+    setInterval(getRandomEmoji, 5000);
+    
 });
 
 // 显示结果
@@ -311,9 +369,4 @@ document.addEventListener('keypress', function(e) {
             }
         }
     }
-});
-
-// 页面加载完成后的初始化
-document.addEventListener('DOMContentLoaded', function() {
-    getRandomEmoji();
 });
