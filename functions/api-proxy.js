@@ -1,65 +1,52 @@
-export async function onRequest(context) {
+export async function onRequestPost(context) {
   const { request } = context;
-  const url = new URL(request.url);
   
-  // 获取目标URL
-  const targetUrl = url.searchParams.get('url');
-  
-  if (!targetUrl) {
-    return new Response(
-      JSON.stringify({ error: 'Missing URL parameter' }),
-      {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        },
-      }
-    );
-  }
-
-  // 验证URL格式
   try {
-    new URL(targetUrl);
-  } catch (e) {
-    return new Response(
-      JSON.stringify({ error: 'Invalid URL' }),
-      {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        },
-      }
-    );
-  }
+    // 解析POST请求体
+    const body = await request.json();
+    const { url } = body;
+    
+    if (!url) {
+      return new Response(
+        JSON.stringify({ error: 'Missing URL in request body' }),
+        {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+        }
+      );
+    }
 
-  // 处理预检请求
-  if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Max-Age': '86400',
-      },
-    });
-  }
+    // 验证URL格式
+    try {
+      new URL(url);
+    } catch (e) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid URL' }),
+        {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+        }
+      );
+    }
 
-  try {
     // 发起请求到目标URL
-    const response = await fetch(targetUrl, {
-      method: request.method,
+    const response = await fetch(url, {
+      method: 'GET', // 始终使用GET方法访问目标API
       headers: {
-        ...request.headers,
         'User-Agent': 'Mozilla/5.0 (compatible; Bilibili Query Tool)',
+        'Accept': 'application/json',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
       },
-      body: request.method !== 'GET' && request.method !== 'HEAD' ? await request.text() : undefined,
     });
 
     // 获取响应数据
@@ -71,7 +58,7 @@ export async function onRequest(context) {
       headers: {
         'Content-Type': response.headers.get('Content-Type') || 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         'Cache-Control': 's-maxage=60, stale-while-revalidate=30',
       },
@@ -84,10 +71,23 @@ export async function onRequest(context) {
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         },
       }
     );
   }
+}
+
+// 处理OPTIONS预检请求
+export async function onRequestOptions(context) {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400',
+    },
+  });
 }

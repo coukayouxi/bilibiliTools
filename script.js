@@ -1,9 +1,15 @@
-// API请求函数 - 使用Cloudflare Pages函数代理
+// API请求函数 - 使用POST请求到Cloudflare Pages函数代理
 async function request(url) {
     try {
         // 使用相对路径的Cloudflare Pages函数
-        const proxy = `/api/proxy?url=${encodeURIComponent(url)}`;
-        const res = await fetch(proxy);
+        const proxy = `/api/proxy`;
+        const res = await fetch(proxy, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ url: url })
+        });
         if (!res.ok) throw new Error('network');
         return await res.json();
     } catch (error) {

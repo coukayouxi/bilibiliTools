@@ -175,13 +175,14 @@
             <div class="api-doc">
                 <h3 style="color: #222; margin-bottom: 20px;">B站信息查询 API 文档</h3>
                 <p style="color: #666; margin-bottom: 20px; line-height: 1.6;">
-                    本API提供B站数据查询功能，所有请求都需要通过代理访问以避免跨域问题。
+                    本API提供B站数据查询功能，所有请求都使用了<strong style="color: #ff4757;">Cloudflare Pages Functions</strong>来避免跨域问题，
+                    实际上还是使用了bilibili的API所以<strong style="color: #ff4757;">请不要使用本网站js代码中的API</strong>如需使用API请看本API文档。
                 </p>
                 
                 <div class="api-section">
                     <h3>1. 用户信息查询</h3>
                     <div class="api-endpoint">
-                        GET https://api.allorigins.win/raw?url=https://api.bilibili.com/x/relation/stat?vmid={uid}
+                        GET https://api.bilibili.com/x/relation/stat?vmid={uid}
                     </div>
                     <div class="api-params">
                         <h4>参数说明:</h4>
@@ -211,7 +212,7 @@ console.log(data.data.follower); // 粉丝数
                 <div class="api-section">
                     <h3>2. 视频信息查询</h3>
                     <div class="api-endpoint">
-                        GET https://api.allorigins.win/raw?url=https://api.bilibili.com/x/web-interface/view?bvid={bvid}
+                        GET https://api.bilibili.com/x/web-interface/view?bvid={bvid}
                     </div>
                     <div class="api-params">
                         <h4>参数说明:</h4>
@@ -244,7 +245,7 @@ console.log(data.data.title); // 视频标题
                 <div class="api-section">
                     <h3>3. 直播间信息查询</h3>
                     <div class="api-endpoint">
-                        GET https://api.allorigins.win/raw?url=https://api.live.bilibili.com/room/v1/Room/get_info?room_id={room_id}
+                        GET https://api.live.bilibili.com/room/v1/Room/get_info?room_id={room_id}
                     </div>
                     <div class="api-params">
                         <h4>参数说明:</h4>
@@ -273,7 +274,7 @@ console.log(data.data.online); // 在线人数
                 <div class="api-section">
                     <h3>4. 排行榜查询</h3>
                     <div class="api-endpoint">
-                        GET https://api.allorigins.win/raw?url=https://api.bilibili.com/x/web-interface/ranking/v2?rid={rid}&type=all
+                        GET https://api.bilibili.com/x/web-interface/ranking/v2?rid={rid}&type=all
                     </div>
                     <div class="api-params">
                         <h4>参数说明:</h4>
@@ -311,7 +312,7 @@ console.log(data.data.list[0].title); // TOP1标题
                 <div class="api-section">
                     <h3>5. 视频评论查询</h3>
                     <div class="api-endpoint">
-                        GET https://api.allorigins.win/raw?url=https://api.bilibili.com/x/v2/reply?type=1&oid={bvid}&sort=2&ps={count}
+                        GET https://api.bilibili.com/x/v2/reply?type=1&oid={bvid}&sort=2&ps={count}
                     </div>
                     <div class="api-params">
                         <h4>参数说明:</h4>
