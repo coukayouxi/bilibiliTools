@@ -15,19 +15,19 @@
 
         <nav class="nav">
             <ul class="nav-menu">
-                <li class="nav-item active" data-page="home">🏠 首页</li>
-                <li class="nav-item" data-page="user">👤 用户查询</li>
-                <li class="nav-item" data-page="video">🎬 视频分析</li>
-                <li class="nav-item" data-page="live">🔴 直播数据</li>
-                <li class="nav-item" data-page="rank">🏆 排行榜单</li>
-                <li class="nav-item" data-page="comment">💬 评论获取</li>
-                <li class="nav-item" data-page="emoji">😊 表情包</li>
-                <li class="nav-item" data-page="api">📚 API文档</li>
-                <li class="nav-item" data-page="chat">💬 交流社区</li>
+                <li class="nav-item active" data-page="home"><a href="#home">🏠 首页</a></li>
+                <li class="nav-item" data-page="user"><a href="#user">👤 用户查询</a></li>
+                <li class="nav-item" data-page="video"><a href="#video">🎬 视频分析</a></li>
+                <li class="nav-item" data-page="live"><a href="#live">🔴 直播数据</a></li>
+                <li class="nav-item" data-page="rank"><a href="#rank">🏆 排行榜单</a></li>
+                <li class="nav-item" data-page="comment"><a href="#comment">💬 评论获取</a></li>
+                <li class="nav-item" data-page="emoji"><a href="#emoji">😊 表情包</a></li>
+                <li class="nav-item" data-page="api"><a href="#api">📚 API文档</a></li>
+                <li class="nav-item" data-page="chat"><a href="#chat">💬 交流社区</a></li>
             </ul>
         </nav>
 
-        <div class="page active" id="home-page">
+        <div class="page active" id="home" data-page-id="home-page">
             <div class="page-header" data-icon="🏠">
                 <h2>首页概览</h2>
             </div>
@@ -69,7 +69,7 @@
             </div>
         </div>
 
-        <div class="page" id="user-page">
+        <div class="page" id="user" data-page-id="user-page">
             <div class="page-header" data-icon="👤">
                 <h2>用户信息查询</h2>
             </div>
@@ -84,7 +84,7 @@
             <div class="results" id="user-results"></div>
         </div>
 
-        <div class="page" id="video-page">
+        <div class="page" id="video" data-page-id="video-page">
             <div class="page-header" data-icon="🎬">
                 <h2>视频信息查询</h2>
             </div>
@@ -98,7 +98,7 @@
             <div class="results" id="video-results"></div>
         </div>
 
-        <div class="page" id="live-page">
+        <div class="page" id="live" data-page-id="live-page">
             <div class="page-header" data-icon="🔴">
                 <h2>直播间数据</h2>
             </div>
@@ -112,7 +112,7 @@
             <div class="results" id="live-results"></div>
         </div>
 
-        <div class="page" id="rank-page">
+        <div class="page" id="rank" data-page-id="rank-page">
             <div class="page-header" data-icon="🏆">
                 <h2>排行榜查询</h2>
             </div>
@@ -126,7 +126,7 @@
             <div class="results" id="rank-results"></div>
         </div>
 
-        <div class="page" id="comment-page">
+        <div class="page" id="comment" data-page-id="comment-page">
             <div class="page-header" data-icon="💬">
                 <h2>热评获取</h2>
             </div>
@@ -157,7 +157,7 @@
             <div class="results" id="comment-results"></div>
         </div>
 
-        <div class="page" id="emoji-page">
+        <div class="page" id="emoji" data-page-id="emoji-page">
             <div class="page-header" data-icon="😊">
                 <h2>随机B站表情</h2>
             </div>
@@ -167,7 +167,7 @@
             </div>
         </div>
 
-        <div class="page" id="api-page">
+        <div class="page" id="api" data-page-id="api-page">
             <div class="page-header" data-icon="📚">
                 <h2>API文档</h2>
             </div>
@@ -382,7 +382,7 @@ console.log(data.data.replies[0].content.message); // 热门评论
             </div>
         </div>
 
-        <div class="page" id="chat-page">
+        <div class="page" id="chat" data-page-id="chat-page">
             <div class="page-header" data-icon="💬">
                 <h2>交流社区</h2>
             </div>

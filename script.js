@@ -1,7 +1,8 @@
-// API请求函数
+// API请求函数 - 使用Cloudflare Pages函数代理
 async function request(url) {
     try {
-        const proxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+        // 使用相对路径的Cloudflare Pages函数
+        const proxy = `/api/proxy?url=${encodeURIComponent(url)}`;
         const res = await fetch(proxy);
         if (!res.ok) throw new Error('network');
         return await res.json();
@@ -23,87 +24,20 @@ function switchPage(pageName) {
     });
     
     // 显示对应页面
-    document.getElementById(pageName + '-page').classList.add('active');
+    document.querySelector(`[data-page-id="${pageName}-page"]`).classList.add('active');
     // 设置对应导航项为active
     document.querySelector(`[data-page="${pageName}"]`).classList.add('active');
-}
-
-// 根据当前URL hash切换页面
-function switchPageByHash() {
-    const hash = window.location.hash.substring(1); // 移除 '#' 符号
-    if (hash) {
-        // 检查是否是特殊hash如 user-uid, video-bvid 等
-        if (hash.includes('-')) {
-            const [pageName, param] = hash.split('-', 2);
-            switchPage(pageName);
-            // 根据参数类型填充对应输入框
-            if (pageName === 'user' && param) {
-                document.getElementById('user-uid').value = param;
-            } else if (pageName === 'video' && param) {
-                document.getElementById('video-bvid').value = param;
-            } else if (pageName === 'live' && param) {
-                document.getElementById('live-room').value = param;
-            } else if (pageName === 'rank' && param) {
-                document.getElementById('rank-rid').value = param;
-            }
-        } else {
-            switchPage(hash);
-        }
-    } else {
-        // 如果没有hash，默认显示首页
-        switchPage('home');
-    }
+    
+    // 更新URL
+    window.location.hash = pageName;
 }
 
 // 页面切换事件
-document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', function() {
-        const pageName = this.getAttribute('data-page');
+document.querySelectorAll('.nav-item a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const pageName = this.parentElement.getAttribute('data-page');
         switchPage(pageName);
-        // 更新URL hash但不刷新页面
-        window.location.hash = pageName;
-    });
-});
-
-// 监听hash变化事件
-window.addEventListener('hashchange', switchPageByHash);
-
-// 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', function() {
-    // 根据URL中的hash值显示对应页面
-    switchPageByHash();
-    
-    // 生成随机表情
-    getRandomEmoji();
-    setInterval(getRandomEmoji, 5000);
-    
-    // 键盘回车事件
-    document.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            const activePage = document.querySelector('.page.active').id.replace('-page', '');
-            
-            if (activePage === 'user') {
-                if (document.activeElement.id === 'user-uid') {
-                    getUserInfo();
-                }
-            } else if (activePage === 'video') {
-                if (document.activeElement.id === 'video-bvid') {
-                    getVideoInfo();
-                }
-            } else if (activePage === 'live') {
-                if (document.activeElement.id === 'live-room') {
-                    getLiveOnline();
-                }
-            } else if (activePage === 'rank') {
-                if (document.activeElement.id === 'rank-rid') {
-                    getRankTop1();
-                }
-            } else if (activePage === 'comment') {
-                if (document.activeElement.id === 'comment-bvid') {
-                    getHotComments();
-                }
-            }
-        }
     });
 });
 
@@ -355,3 +289,54 @@ function getRandomEmoji() {
     document.getElementById('emoji-display').textContent = emoji;
 }
 
+// 键盘回车事件
+document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        const activePage = document.querySelector('.page.active').id;
+        const pageName = activePage;
+        
+        if (pageName === 'user') {
+            if (document.activeElement.id === 'user-uid') {
+                getUserInfo();
+            }
+        } else if (pageName === 'video') {
+            if (document.activeElement.id === 'video-bvid') {
+                getVideoInfo();
+            }
+        } else if (pageName === 'live') {
+            if (document.activeElement.id === 'live-room') {
+                getLiveOnline();
+            }
+        } else if (pageName === 'rank') {
+            if (document.activeElement.id === 'rank-rid') {
+                getRankTop1();
+            }
+        } else if (pageName === 'comment') {
+            if (document.activeElement.id === 'comment-bvid') {
+                getHotComments();
+            }
+        }
+    }
+});
+
+// 页面加载完成后的初始化
+document.addEventListener('DOMContentLoaded', function() {
+    // 检查URL中的锚点并切换到对应页面
+    const hash = window.location.hash.substring(1);
+    if (hash && document.querySelector(`[data-page="${hash}"]`)) {
+        switchPage(hash);
+    } else {
+        // 默认显示首页
+        switchPage('home');
+    }
+    
+    getRandomEmoji();
+});
+
+// 监听URL变化
+window.addEventListener('hashchange', function() {
+    const hash = window.location.hash.substring(1);
+    if (hash && document.querySelector(`[data-page="${hash}"]`)) {
+        switchPage(hash);
+    }
+});
